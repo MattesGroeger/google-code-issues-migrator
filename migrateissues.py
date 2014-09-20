@@ -91,7 +91,7 @@ def add_issue_to_github(issue):
 
     body = issue['content'].replace('%', '&#37;')
 
-    output('Adding issue %d' % issue['gid'])
+    output('Adding issue %d: %s\n' % (issue['gid'], issue['title']))
 
     github_issue = None
 
