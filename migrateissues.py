@@ -96,7 +96,8 @@ def add_issue_to_github(issue):
     github_issue = None
 
     if not options.dry_run:
-        github_labels = [github_label(label) for label in issue['labels']]
+        filtered_labels = [elem for elem in issue['labels'] if len(elem) > 0]
+        github_labels = [github_label(label) for label in filtered_labels]
         github_issue = github_repo.create_issue(issue['title'], body = body.encode('utf-8'), labels = github_labels)
 
     # Assigns issues that originally had an owner to the current user
