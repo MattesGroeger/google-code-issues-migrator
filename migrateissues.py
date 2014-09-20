@@ -116,7 +116,7 @@ def add_comments_to_issue(github_issue, gcode_issue):
     existing_comments = [comment.body for comment in github_issue.get_comments()]
 
     # Add any remaining comments to the Github issue
-    output(", adding comments")
+    output("  adding comments")
     for i, comment in enumerate(gcode_issue['comments']):
         try:
             body = u'_From {author} on {date}_\n\n{body}'.format(**comment)
@@ -257,6 +257,12 @@ def process_gcode_issues(existing_issues):
     previous_gid = 1
 
     for issue in issues:
+        gid = int(issue['ID'])
+
+        if options.start_from_id and (gid < int(options.start_from_id)):
+            output('Skipping issue %d\n' % gid)
+            continue
+
         issue = get_gcode_issue(issue)
 
         if options.skip_closed and (issue['state'] == 'closed'):
@@ -344,7 +350,8 @@ if __name__ == "__main__":
     parser.add_option("-p", "--omit-priority", action = "store_true", dest = "omit_priority", help = "Don't migrate priority labels", default = False)
     parser.add_option("-s", "--synchronize-ids", action = "store_true", dest = "synchronize_ids", help = "Ensure that migrated issues keep the same ID", default = False)
     parser.add_option("-c", "--google-code-cookie", dest = "google_code_cookie", help = "Cookie to use for Google Code requests. Required to get unmangled names", default = '')
-    parser.add_option('--skip-closed', action = 'store_true', dest = 'skip_closed', help = 'Skip all closed bugs', default = False)
+    parser.add_option("--skip-closed", action = "store_true", dest = "skip_closed", help = "Skip all closed bugs", default = False)
+    parser.add_option("-f", "--start-from-id", dest = "start_from_id", help = "Start processing issues from this issue id onwards", default = 0)
 
     options, args = parser.parse_args()
 
