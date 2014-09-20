@@ -118,14 +118,17 @@ def add_comments_to_issue(github_issue, gcode_issue):
     # Add any remaining comments to the Github issue
     output(", adding comments")
     for i, comment in enumerate(gcode_issue['comments']):
-        body = u'_From {author} on {date}_\n\n{body}'.format(**comment)
-        if body in existing_comments:
-            logging.info('Skipping comment %d: already present', i + 1)
-        else:
-            logging.info('Adding comment %d', i + 1)
-            if not options.dry_run:
-                github_issue.create_comment(body.encode('utf-8'))
-            output('.')
+        try:
+            body = u'_From {author} on {date}_\n\n{body}'.format(**comment)
+            if body in existing_comments:
+                logging.info('Skipping comment %d: already present', i + 1)
+            else:
+                logging.info('Adding comment %d', i + 1)
+                if not options.dry_run:
+                    github_issue.create_comment(body.encode('utf-8'))
+                output('.')
+        except:
+            output('x')
 
 
 def get_attachments(link, attachments):
